@@ -1,3 +1,4 @@
+import numpy as np
 from actions import best_in_hindsight
 
 def check_performance(payoff, actions):
@@ -31,3 +32,12 @@ def calculate_regret(payoff, actions):
     n = len(actions)
     regret = (OPT - ALG) / n
     return regret
+
+def theo_best_e(payoff):
+    """ 
+    Given a set of payoffs, calculates the theoretical optimal learning rate.
+    """
+    k = len(payoff)
+    n = len(payoff[0])
+    e = np.sqrt(np.log(k) / n)
+    return e
