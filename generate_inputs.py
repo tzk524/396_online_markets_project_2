@@ -89,3 +89,4 @@ def init_inputs(k, steps):
     k_distribution = init_distribution(k)
     payoff = init_payoff(k_distribution, steps)
     return k_distribution, payoff
+
