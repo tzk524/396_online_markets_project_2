@@ -103,9 +103,88 @@ def exponential_weights(payoff, e, h=1):
    
     
 # ----------------------------------------------------------------------------
-def follow_the_perturbed_leader(payoff):
+def toss_coin(e):
+    """
+    Toss a biased coin. Probability of landing on heads is e. Probability of
+    landinig on tails is 1-e. If the coin lands on head, return True. Else,
+    return false.
+    """
+    outcome = [True, False]
+    prob = [e, 1-e]
+    result = np.random.choice(outcome, p=prob)
+    return result
+
+def hallucinate(payoff, e, h=1):
+    """
+
+    Parameters
+    ----------
+    payoff : nested-list
+        A nested list that contains k lists, each corresponds to one of the
+        possible k actions. a.k.a. Each k's simulated payoff.
+    e : float in (0, 1)
+        The learning rate. The probability of flipping a head.
+    h : int
+        Specifies the cap for the per-stage payoff.
+
+    Returns
+    -------
+    hallucination : list of length k
+        A list that contains a hallucination for each of the k actions.
+
+    """
+    k = len(payoff) # The number of actions to choose from.
+    hallucination = []
+    for i in range(k):
+        curr = 0
+        curr_coin = toss_coin(e)
+        while curr_coin == False:
+            curr += h
+            curr_coin = toss_coin(e)
+        hallucination.append(curr)
+    return hallucination
+    
+    
+def ftpl_action(payoff, step, hallucination):
+    """
+
+    Parameters
+    ----------
+    payoff : nested-list
+        A nested list that contains k lists, each corresponds to one of the
+        possible k actions. a.k.a. Each k's simulated payoff.
+    step : int
+        Specifies the current round of interest.
+    hallucination : list of k int
+        Contains the initial hallucination for each of the k actions.
+
+    Returns
+    -------
+    action : int
+        The action determined by follow the perturbed leader algorithm for
+        the current round of interest.
+
+    """
+    k = len(payoff) # The number of actions to choose from.
+    performance = []
+    for i in range(k):
+        k_payoff = payoff[i][:step]
+        k_performance = hallucination[i] + sum(k_payoff)
+        performance.append(k_performance)
+    action = np.argmax(performance)
+    return action
+    
+
+def follow_the_perturbed_leader(payoff, hallucination):
     """
     Given a payoff, this funtion produces a list of actions that the user
     shall take following the follow_the_perturbed_leader algorithm.
+    e = learning rate
+    h = cap for the per-stage payoff.
     """
-    raise NotImplemented()
+    actions = []
+    steps = len(payoff[0]) # The number of rounds.
+    for i in range(steps):
+        curr_action = ftpl_action(payoff, i, hallucination)
+        actions.append(curr_action)
+    return actions
