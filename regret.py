@@ -41,3 +41,9 @@ def theo_best_e(payoff):
     n = len(payoff[0])
     e = np.sqrt(np.log(k) / n)
     return e
+
+def cal_theo_e(k, n):
+    e = np.sqrt(np.log(k) / n)
+    return e
+
+

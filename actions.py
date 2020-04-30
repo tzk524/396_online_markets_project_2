@@ -188,3 +188,6 @@ def follow_the_perturbed_leader(payoff, hallucination):
         curr_action = ftpl_action(payoff, i, hallucination)
         actions.append(curr_action)
     return actions
+
+
+
